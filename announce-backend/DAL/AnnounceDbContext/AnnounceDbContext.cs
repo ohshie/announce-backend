@@ -11,4 +11,5 @@ public class AnnounceDbContext(DbContextOptions<AnnounceDbContext> options) : Db
     }
 
     public required DbSet<User> Users { get; set; }
+    public required DbSet<VkToken> VkTokens { get; set; }
 }

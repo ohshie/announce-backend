@@ -7,7 +7,7 @@ namespace announce_backend.Controllers;
 
 public class AuthController(AuthManager authManager) : ControllerBase
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "CreateUser")]
     [HttpPost("CreateNewUser", Name = "CreateNewUser")]
     public async Task<ActionResult<RegisteredUser>> CreateNewUser(RegisterModel user)
     {
