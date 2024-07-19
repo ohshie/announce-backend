@@ -1,6 +1,9 @@
 using System.Text;
+using announce_backend.Business.AnnounceManager;
 using announce_backend.Business.Auth.Authentification;
 using announce_backend.Business.Auth.Authorization;
+using announce_backend.Business.Helpers;
+using announce_backend.Business.Mapper;
 using announce_backend.Business.VkVideo;
 using announce_backend.DAL.AnnounceDbContext;
 using announce_backend.DAL.Repository;
@@ -65,6 +68,10 @@ public class Startup
         builder.Services.AddTransient<AuthManager>();
         builder.Services.AddTransient<VkVideoUrlFetcher>();
         builder.Services.AddTransient<VkTokenManager>();
+        builder.Services.AddTransient<AnnounceCreator>();
+        builder.Services.AddTransient<AnnouncePoster>();
+        builder.Services.AddTransient<DateConverter>();
+        builder.Services.AddTransient<Mapper>();
         
         builder.Services.AddSerilog();
 
@@ -125,6 +132,7 @@ public class Startup
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
+                .WithExposedHeaders("Authorization")
                 .Build());
         });
 

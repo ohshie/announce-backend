@@ -1,5 +1,6 @@
 using announce_backend.Business.VkVideo;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace announce_backend.Controllers;
@@ -19,7 +20,7 @@ public class VkController(VkTokenManager tokenManager) : ControllerBase
         return Ok();
     }
 
-    [HttpPost("UpdateVkToken", Name = ",UpdateVkToken")]
+    [HttpPost("UpdateVkToken", Name = "UpdateVkToken")]
     public async Task<ActionResult> UpdateVkToken(string vkToken)
     {
         if (string.IsNullOrEmpty(vkToken))

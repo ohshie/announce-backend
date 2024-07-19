@@ -1,20 +1,23 @@
 using System.Text.Json;
+using announce_backend.DAL.Repository.IRepository;
 using announce_backend.Models;
+using announce_backend.Models.InternalModels;
 
 namespace announce_backend.Business.VkVideo;
 
-public class VkVideoUrlFetcher(ILogger<VkVideoUrlFetcher> logger)
+public class VkVideoUrlFetcher(ILogger<VkVideoUrlFetcher> logger, IVkTokenRepository tokenRepository)
 {
-    public async Task<IEnumerable<VkVideoInfo>?> Execute(string vkTokenUrl, string? groupName, int announcesAmount = 0)
+    public async Task<List<VkVideoInfo>?> Execute(string? groupName, int announcesAmount = 0)
     {
-        var token = TokenExtractor(vkTokenUrl);
+        var token = await tokenRepository.GetDefault();
+        
         logger.LogInformation("Attempting to parse video Url's from VK with {VkToken}", 
-            vkTokenUrl);
+            token.ApiToken);
 
-        var requestUrl = PrepareRequestUrl(token, groupName, announcesAmount);
+        var requestUrl = PrepareRequestUrl(token.ApiToken, groupName, announcesAmount);
 
         var responseBody = await MakeRequestFromVk(requestUrl);
-        if (responseBody is null) return null;
+        if (string.IsNullOrEmpty(responseBody)) return null;
 
         var videoInfos = ParseResponseFromVk(responseBody);
 
@@ -52,7 +55,7 @@ public class VkVideoUrlFetcher(ILogger<VkVideoUrlFetcher> logger)
         }
     }
 
-    private IEnumerable<VkVideoInfo>? ParseResponseFromVk(string responseBody)
+    private List<VkVideoInfo>? ParseResponseFromVk(string responseBody)
     {
         try
         {
@@ -71,15 +74,5 @@ public class VkVideoUrlFetcher(ILogger<VkVideoUrlFetcher> logger)
             logger.LogError("Something went wrong processing request to VK. Please check token or group info. Error: {Exception} {ExceptionWhere}", e.Message, e.StackTrace);
             return null;
         }
-    }
-    
-    private string TokenExtractor(string url)
-    {
-        var extractedToken = url.Split("token=")
-            .Last()
-            .Split("&expires")
-            .First();
-
-        return extractedToken;
     }
 }

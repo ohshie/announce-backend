@@ -1,4 +1,4 @@
-namespace announce_backend.Models;
+namespace announce_backend.Models.InternalModels;
 
 public static class VkGroupIdDictionary
 {

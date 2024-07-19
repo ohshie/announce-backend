@@ -3,6 +3,7 @@ using announce_backend.DAL.AnnounceDbContext;
 using announce_backend.DAL.Repository.IRepository;
 using announce_backend.DAL.UnitOfWork;
 using announce_backend.Models;
+using announce_backend.Models.InternalModels;
 
 namespace announce_backend.Business.VkVideo;
 
