@@ -62,11 +62,13 @@ public class DateConverter(ILogger<DateConverter> logger)
 
     private DateTime DayOfWeekToDate(string dayOfTheWeek)
     {
-        if (DateTime.TryParse(dayOfTheWeek, new CultureInfo("ru-RU"),
-                DateTimeStyles.AdjustToUniversal, out var announceDate)) return announceDate;
+        dayOfTheWeek = dayOfTheWeek.Trim();
+        
+        if (TryParseExactInvariant(dayOfTheWeek, "dd.MM.yyyy", out var announceDate)) return announceDate;
         
         if (!Enum.TryParse(dayOfTheWeek, out RuDates parsedRuDate)) return GetDefaultAnnounceDate();
 
+        logger.LogWarning("Unable to parse date: {Date}. Using default date", dayOfTheWeek);
         announceDate = GetMonday().AddDays(Convert.ToInt32(parsedRuDate) - 1);
         
         return announceDate;
@@ -82,6 +84,11 @@ public class DateConverter(ILogger<DateConverter> logger)
         var nextMonday = GetMonday();
 
         return nextMonday.AddDays(6).Date;
+    }
+    
+    private bool TryParseExactInvariant(string input, string format, out DateTime result)
+    {
+        return DateTime.TryParseExact(input, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result);
     }
 
     private DateTime GetMonday()
