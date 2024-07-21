@@ -21,19 +21,19 @@ public class VkController(VkTokenManager tokenManager) : ControllerBase
     }
 
     [HttpPost("UpdateVkToken", Name = "UpdateVkToken")]
-    public async Task<ActionResult> UpdateVkToken(string vkToken)
+    public async Task<ActionResult> UpdateVkToken([FromBody]string newVkToken)
     {
-        if (string.IsNullOrEmpty(vkToken))
+        if (string.IsNullOrEmpty(newVkToken))
         {
             return BadRequest("Token cannot be empty string");
         }
 
-        if (vkToken.Contains(' '))
+        if (newVkToken.Contains(' '))
         {
             return BadRequest("VkToken cannot contain white spaces");
         }
 
-        var updatedVkToken = await tokenManager.UpdateCurrentToken(vkToken);
+        var updatedVkToken = await tokenManager.UpdateCurrentToken(newVkToken);
         if (updatedVkToken is null)
         {
             return BadRequest("Provided token did not work. Please doublecheck your token.");
